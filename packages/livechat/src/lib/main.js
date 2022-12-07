@@ -1,4 +1,5 @@
 import i18next from 'i18next';
+import { parse } from 'query-string';
 
 import { Livechat } from '../api';
 import { canRenderMessage } from '../components/helpers';
@@ -38,7 +39,11 @@ export const updateBusinessUnit = async (newBusinessUnit) => {
 export const loadConfig = async () => {
 	const { token, businessUnit = null, iframe: { guest: { department } = {} } = {} } = store.state;
 
-	Livechat.credentials.token = token;
+	// CUSTOMIZED: Retrieving the token from the url parameter
+	const urlToken = parse(window.location.search).token;
+	const connectionToken = token === urlToken || !urlToken ? token : urlToken;
+
+	Livechat.credentials.token = connectionToken;
 
 	const {
 		agent,
@@ -48,12 +53,13 @@ export const loadConfig = async () => {
 		queueInfo,
 		...config
 	} = await Livechat.config({
-		token,
+		token: connectionToken,
 		...(businessUnit && { businessUnit }),
 		...(department && { department }),
 	});
 
 	await store.setState({
+		token: connectionToken,
 		config,
 		agent: agent && agent.hiddenInfo ? { hiddenInfo: true } : agent, // TODO: revert it when the API is updated
 		room,

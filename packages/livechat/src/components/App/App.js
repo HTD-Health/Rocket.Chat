@@ -145,7 +145,7 @@ export class App extends Component {
 		const {
 			minimized,
 			iframe: { visible },
-			dispatch,
+			// dispatch,
 		} = this.props;
 		parentCall(minimized ? 'minimizeWindow' : 'restoreWindow');
 		parentCall(visible ? 'showWidget' : 'hideWidget');
@@ -154,7 +154,8 @@ export class App extends Component {
 		this.handleVisibilityChange();
 		window.addEventListener('beforeunload', () => {
 			visibility.removeListener(this.handleVisibilityChange);
-			dispatch({ minimized: true, undocked: false });
+			// CUSTOMIZED: Commented because the widget was showing after refreshing the page
+			// dispatch({ minimized: true, undocked: false });
 		});
 
 		i18next.on('languageChanged', this.handleLanguageChange);

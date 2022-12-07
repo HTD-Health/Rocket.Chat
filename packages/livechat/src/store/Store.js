@@ -74,7 +74,7 @@ export default class Store {
 	setState(partialState) {
 		const prevState = this._state;
 		this._state = { ...prevState, ...partialState };
-		this.persist();
+		// this.persist(); // CUSTOMIZED: Do not save to localStorage
 		this.emit('change', [this._state, prevState, partialState]);
 	}
 
@@ -82,7 +82,7 @@ export default class Store {
 		const prevState = this._state;
 		delete prevState[propName];
 		this._state = { ...prevState };
-		this.persist();
+		// this.persist(); // CUSTOMIZED: Do not save to localStorage
 		this.emit('change', [this._state, prevState]);
 	}
 
