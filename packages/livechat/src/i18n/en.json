@@ -59,6 +59,7 @@
         "messages": "Messages",
 				"message_separator_date": "{{val, datetime}}",
 				"message_time": "{{val, datetime}}",
+        "message_received": "Message received! We'll be back to you soon (no later than 1 business day).",
         "minimize_chat": "Minimize chat",
         "name": "Name",
         "need_help": "Need help?",
