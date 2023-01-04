@@ -1,3 +1,104 @@
+# Custom Livechat Development
+## Environment Setup
+More information [here](https://developer.rocket.chat/rocket.chat/rocket-chat-environment-setup/mac-osx)
+
+- Install **Node 14.19.3** either [manually](https://nodejs.org/dist/latest-v14.x/) or using a tool like [nvm](https://github.com/creationix/nvm) (recommended)
+- Install **Meteor**: https://www.meteor.com/developers/install
+- Install **yarn**: https://yarnpkg.com/getting-started/install
+- Clone the repository and navigate into the directory
+
+```
+git clone https://github.com/HTD-Health/Rocket.Chat.git
+cd Rocket.Chat
+```
+
+- Run the following commands to navigate to the meteor directory and download the necessary meteor version for Rocket.Chat, as configured in `.meteor/release` file
+
+```
+cd apps/meteor
+meteor --version
+```
+
+- Back in the main directory, install all the packages by simply running
+
+```
+yarn
+```
+
+- Build and startup your development server by executing
+
+```
+yarn build
+yarn dev # or yarn dsv if your system has less than 16 gigs of memory
+```
+
+When done, you should see the following printed on your terminal and the local server running on http://localhost:3000
+
+## Livechat Customization
+After changes in the livechat package, you need to build it again
+```
+cd packages/livechat
+yarn build
+```
+After launching the rocket chat again, the changes should be visible.
+
+## Docker Image Preparation
+> Make sure you have the latest version of [Docker](https://www.docker.com/) installed.
+
+> Remember to build the project and livechat package beforehand using `yarn build`.
+
+> Make sure you have the correct version of node (**14.19.3**).
+
+- Navigate to the meteor directory
+```
+cd apps/meteor
+```
+- Build the application and copy the `Dockerfile` and `compose.yml` files to the resulting directory
+```
+meteor build --server-only --directory /tmp/rc-build
+cp .docker/Dockerfile /tmp/rc-build
+cp .docker/compose.yml /tmp/rc-build
+cd /tmp/rc-build
+```
+- You need to make sure that the resulting image works properly, so we'll use the `compose.yml` file
+
+```
+docker compose up
+```
+
+If everything went well and the terminal does not report any errors then the local server should be started on http://localhost:3000.
+
+If you want to change the port on which the application is running, create an `.env` file with an example variable
+```
+HOST_PORT=8000
+```
+### Troubleshooting
+
+Official Image Repository: https://github.com/RocketChat/Docker.Official.Image
+#### **Bcrypt Error**
+If you get errors with `bcrypt` when launching the container in the terminal, follow these steps:
+
+- Download the official built package from the link below, where instead of `${RC_VERSION}` enter rocket chat version. 
+
+    https://releases.rocket.chat/${RC_VERSION}/download
+
+- Extract the `.tar` file and replace the `/npm` directory located in `bundle/programs/server/` with the directory in your resulting `/tmp/rc-build/bundle/programs/server/` directory
+
+- Then in the `compose.yml` file add `platform: linux/x86_64` as below:
+
+```
+...
+
+services:
+  rocketchat:
+    platform: linux/x86_64
+    build: .
+...
+```
+
+After deleting the docker image and re-running the `docker compose up` command. The application should run without errors.
+
+
 <img src="https://github.com/RocketChat/Rocket.Chat.Artwork/raw/master/Logos/2020/png/logo-horizontal-red.png" data-canonical-src="https://github.com/RocketChat/Rocket.Chat.Artwork/raw/master/Logos/2020/png/logo-horizontal-red.png" width="500" />
 
 [Rocket.Chat](https://rocket.chat) is an open-source fully customizable communications platform developed in JavaScript for organizations with high standards of data protection.
